@@ -24,25 +24,25 @@ function startGame() {
   modifySettings() 
 
   assetsManager = new BABYLON.AssetsManager(scene) 
-  //loadBackGround(scene) 
+  loadBackGround(scene) 
   scene.backGroundMaterial = backgroundMaterial 
   scene.planets = [] 
-  //loadPlanets(Constants.TEXTURE_PLANET1,Constants.PLANET_1_NAME) 
-  //loadPlanets(Constants.TEXTURE_PLANET2,Constants.PLANET_2_NAME) 
-  //loadPlanets(Constants.TEXTURE_PLANET3,Constants.PLANET_3_NAME) 
-  //loadPlanets(Constants.TEXTURE_PLANET4,Constants.PLANET_4_NAME) 
-  //loadPlanets(Constants.TEXTURE_PLANET5,Constants.PLANET_5_NAME) 
-  //loadPlanets(Constants.TEXTURE_PLANET6,Constants.PLANET_6_NAME) 
-  //loadUfo() 
+  loadPlanets(Constants.TEXTURE_PLANET1,Constants.PLANET_1_NAME) 
+  loadPlanets(Constants.TEXTURE_PLANET2,Constants.PLANET_2_NAME) 
+  loadPlanets(Constants.TEXTURE_PLANET3,Constants.PLANET_3_NAME) 
+  loadPlanets(Constants.TEXTURE_PLANET4,Constants.PLANET_4_NAME) 
+  loadPlanets(Constants.TEXTURE_PLANET5,Constants.PLANET_5_NAME) 
+  loadPlanets(Constants.TEXTURE_PLANET6,Constants.PLANET_6_NAME) 
+  loadUfo() 
 
   loadAircraft() 
-  // loadHologram() 
-  //loadBacgroundSound() 
+  //loadHologram() 
+  loadBacgroundSound() 
 
   createSuns() 
 
   assetsManager.load()
-  //setPlanetToSearch()
+  setPlanetToSearch()
 
   assetsManager.onProgress = function (
     remainingCount,
