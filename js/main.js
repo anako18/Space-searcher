@@ -13,8 +13,11 @@ let assetsManager
 let backgroundMaterial 
 let music
 let skybox
+let score = 0
 
 let inputStates = {} 
+
+let explotionSphere
 
 function startGame() {
   canvas = document.querySelector("#myCanvas") 
@@ -26,7 +29,8 @@ function startGame() {
   assetsManager = new BABYLON.AssetsManager(scene) 
   loadBackGround(scene) 
   scene.backGroundMaterial = backgroundMaterial 
-  scene.planets = [] 
+  scene.assets = {}
+  scene.planets = []
   loadPlanets(Constants.TEXTURE_PLANET1,Constants.PLANET_1_NAME) 
   loadPlanets(Constants.TEXTURE_PLANET2,Constants.PLANET_2_NAME) 
   loadPlanets(Constants.TEXTURE_PLANET3,Constants.PLANET_3_NAME) 
@@ -37,9 +41,13 @@ function startGame() {
 
   loadAircraft() 
   //loadHologram() 
-  loadBacgroundSound() 
+  loadBackgroundSound()
+  loadLaserSound()
+  loadExplosionSound()
+  loadExplotionParticleSystem()
 
-  createSuns() 
+ // createSuns() 
+ createSpaceClouds()
 
   assetsManager.load()
   setPlanetToSearch()
@@ -76,10 +84,34 @@ function startGame() {
         aircraft.move() 
       }
       if (scene) {
+        rotatePlanets()
         scene.render() 
       }
     }) 
   } 
+}
+
+function rotatePlanets() {
+  for (let i = 0; i < scene.planets.length; i++) {
+    scene.planets[i].rotate(BABYLON.Axis.Y, Math.PI / 30);
+  }
+}
+
+function createSpaceClouds() {
+	    var sphereSpark = BABYLON.MeshBuilder.CreateSphere("sphereSpark", {diameter: 0.4, segments:60}, scene);
+  sphereSpark.position = new  BABYLON.Vector3(5,0,5);
+  sphereSpark.scaling = new  BABYLON.Vector3(2, 2, 2);
+	    sphereSpark.isVisible = false;
+	    BABYLON.ParticleHelper.CreateFromSnippetAsync("UY098C#3", scene, false).then(system => {
+	        system.emitter = sphereSpark;
+	    });
+	    var sphereSmoke = BABYLON.MeshBuilder.CreateSphere("sphereSmoke", {diameter: 1.9, segments:60}, scene);
+  sphereSmoke.position = new  BABYLON.Vector3(5,0,5);
+  sphereSmoke.scaling = new  BABYLON.Vector3(2, 2, 2);
+	    sphereSmoke.isVisible = false;
+	    BABYLON.ParticleHelper.CreateFromSnippetAsync("UY098C#6", scene, false).then(system => {
+	        system.emitter = sphereSmoke;
+	    });
 }
 
 function setPlanetToSearch() {
@@ -126,19 +158,16 @@ function clonePlanets(planet, name) {
     let zrand = Constants.MIN_Z + Math.random() * (Constants.MAX_Z - Constants.MIN_Z) 
     planetClone.position.x = xrand 
     planetClone.position.z = zrand 
+    planetClone.checkCollisions = true;
+    planetClone.isPickable = true;
     scene.planets.push(planetClone) 
   }
 }
 
 function createSuns() {
-  for (let i = 0;  i < Constants.OBJECTS_COUNT; i++) {
     BABYLON.ParticleHelper.CreateAsync("sun", scene, true).then((set) => {
-      let xrand = Constants.MIN_X + Math.random() * (Constants.MAX_X - Constants.MIN_X) 
-      let zrand = Constants.MIN_Z + Math.random() * (Constants.MAX_Z - Constants.MIN_Z) 
-      set.start(new BABYLON.Vector3(xrand, 0, zrand)) 
-      scene.planets.push(set) 
+      set.start();
     })
-  }
 }
 
 function loadUfo() {
@@ -150,11 +179,13 @@ function loadUfo() {
   ) 
   ufoMeshTask.onSuccess = (task) => {
     let ufo = task.loadedMeshes[0] 
-    ufo.position = new BABYLON.Vector3(0, 0, 0) 
+    let xrand = Constants.MIN_X + Math.random() * (Constants.MAX_X - Constants.MIN_X) 
+    let zrand = Constants.MIN_Z + Math.random() * (Constants.MAX_Z - Constants.MIN_Z) 
+    ufo.position = new BABYLON.Vector3(xrand, 0, zrand) 
     ufo.scaling = new BABYLON.Vector3(2, 2, 2)
     ufo.name = "ufo"
     cloneUfos(ufo, task.loadedSkeletons[0]) 
-  } 
+  }
   ufoMeshTask.onError = (task, message, exception) =>
     console.log(message, exception) 
 }
@@ -191,6 +222,80 @@ function createFollowCamera(scene, target) {
   return camera 
 }
 
+function destroyPlanet(planet) {
+  planet.isVisible = false
+  scene.removeMesh(planet)
+  planet.dispose()
+  explotionSphere.position = planet.position
+  scene.assets.explosionSound.play()
+  explotionSphere.particleSystem.start()
+  setTimeout(() => {
+    explotionSphere.particleSystem.stop()
+  }, Constants.EXPLOSION_TIMEOUT)
+}
+
+function loadExplotionParticleSystem() {
+  var particleSystem = new BABYLON.ParticleSystem("destroyParticles", 2000, scene);
+
+  explotionSphere = BABYLON.MeshBuilder.CreateSphere("box",  {diameter: 0.4, segments:60}, scene)
+  explotionSphere.isVisible = false;
+  explotionSphere.particleSystem = particleSystem
+
+  particleSystem.emitter = explotionSphere;
+  particleSystem.particleTexture = new BABYLON.Texture("textures/flare.png", scene);
+  particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, 0);
+  particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 0);
+  particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
+  particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+  particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+  particleSystem.minSize = 0.1;
+  particleSystem.maxSize = 0.5;
+  particleSystem.minLifeTime = 0.3;
+  particleSystem.maxLifeTime = 1.5;
+  particleSystem.emitRate = 1500;
+  particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+  particleSystem.direction1 = new BABYLON.Vector3(-3, 8, 3);
+  particleSystem.direction2 = new BABYLON.Vector3(3, 8, -3);
+  particleSystem.minAngularSpeed = 0;
+  particleSystem.maxAngularSpeed = Math.PI;
+
+  particleSystem.minEmitPower = 1;
+  particleSystem.maxEmitPower = 3;
+  particleSystem.updateSpeed = 0.005;
+}
+
+function createAircraftFire(aircraft) {
+  var particleSystem = new BABYLON.ParticleSystem("aircraftFire", 200, scene);
+  particleSystem.particleTexture = new BABYLON.Texture("/textures/fire.jpg", scene);
+
+  let fireSphere = BABYLON.MeshBuilder.CreateSphere("box",  {diameter: 0.4, segments:60}, scene)
+  fireSphere.isVisible = false;
+  aircraft.addChild(fireSphere);
+
+  particleSystem.emitter = fireSphere;
+
+  particleSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0);
+  particleSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0);
+  particleSystem.color1 = new BABYLON.Color4(0.7, 0.7, 0.7, 1.0);
+  particleSystem.color2 = new BABYLON.Color4(0.7, 0.7, 0.7, 1.0);
+  particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.0, 0.0);
+  particleSystem.minSize = 0.1;
+  particleSystem.maxSize = 0.4;
+  particleSystem.minLifeTime = 0.2;
+  particleSystem.maxLifeTime = 1.0;
+  particleSystem.emitRate = 20000;
+  particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+  particleSystem.direction1 = new BABYLON.Vector3(-1, 4, 1);
+  particleSystem.direction2 = new BABYLON.Vector3(1, 4, -1);
+  particleSystem.minAngularSpeed = 0;
+  particleSystem.maxAngularSpeed = Math.PI;
+  particleSystem.minEmitPower = 0;
+  particleSystem.maxEmitPower = 0.2;
+  particleSystem.updateSpeed = 0.01;
+  
+  particleSystem.start();
+}
+
 function loadAircraft() {
   var aircraftMeshTask = assetsManager.addMeshTask(
     "Aircraft task",
@@ -206,7 +311,8 @@ function loadAircraft() {
     aircraft.position = new BABYLON.Vector3(0, 0, 0) 
     aircraft.scaling = new BABYLON.Vector3(Constants.AIRCRAFT_SCALING, Constants.AIRCRAFT_SCALING, Constants.AIRCRAFT_SCALING) 
     aircraft.rotation = new BABYLON.Vector3(0, 0, 0) 
-    aircraft.name = Constants.AIRCRAFT_MESH_NAME 
+    aircraft.name = Constants.AIRCRAFT_MESH_NAME
+    aircraft.checkCollisions = true;
 
     aircraft.minZ = Constants.MIN_Z
     aircraft.maxZ = Constants.MAX_Z 
@@ -215,6 +321,8 @@ function loadAircraft() {
 
     aircraft.speed = Constants.AIRCRAFT_SPEED 
     aircraft.frontVector = new BABYLON.Vector3(0, 0, 0) 
+
+    createAircraftFire(aircraft)
    
     createFollowCamera(scene, aircraft) 
 
@@ -224,7 +332,7 @@ function loadAircraft() {
       if (!inputStates.laser) return 
       if (!aircraft.canFireLasers) return 
       aircraft.canFireLasers = false 
-
+      scene.assets.laserSound.play();
       setTimeout(() => {
         aircraft.canFireLasers = true 
       }, Constants.RAY_TIMEOUT * aircraft.fireLasersAfter) 
@@ -233,7 +341,7 @@ function loadAircraft() {
 
       let direction = new BABYLON.Vector3(
         aircraft.frontVector.x,
-        aircraft.frontVector.y + 3,
+        aircraft.frontVector.y + 0.1,
         aircraft.frontVector.z
       ) 
       let length = Constants.RAY_LENGTH 
@@ -242,17 +350,16 @@ function loadAircraft() {
       let rayHelper = new BABYLON.RayHelper(ray) 
       rayHelper.show(scene, new BABYLON.Color3.Red()) 
 
+      let pickInfo2 = scene.pickWithRay(ray)
       let pickInfo = scene.pickWithRay(ray, (mesh) => {
-        /*
-              if((mesh.name === "heroTank")|| ((mesh.name === "ray"))) return false 
-              return true 
-              */
-        console.log(mesh.name) 
         return mesh.name.startsWith(CURRENT_PLANET_TO_SEARCH) 
       }) 
 
       if (pickInfo.pickedMesh) {
-        console.log("PICK", pickInfo.pickedMesh.name) 
+        destroyPlanet(pickInfo.pickedMesh)
+        score+=1
+        changeScore(score)
+        setPlanetToSearch()
       }
 
       setTimeout(() => {
@@ -310,18 +417,50 @@ function loadAircraft() {
 //    console.log(message, exception) 
 //}
 
-function loadBacgroundSound() {
+function loadBackgroundSound() {
   var backgroundMusicTask = assetsManager.addBinaryFileTask(
     "backgroundMusicTask",
     Constants.BACKGROUND_MUSIC
   ) 
   backgroundMusicTask.onSuccess = (task) => {
-    music = new BABYLON.Sound("backgroundMusic", task.data, scene, null, {
+    scene.assets.music = new BABYLON.Sound("backgroundMusic", task.data, scene, null, {
       loop: true,
       autoplay: true,
     }) 
   } 
   backgroundMusicTask.onError = (task, message, exception) =>
+    console.log(message, exception) 
+}
+
+function loadLaserSound() {
+  var laserSoundTask = assetsManager.addBinaryFileTask(
+    "laserSoundTask",
+    Constants.LASER_SOUND
+  ) 
+  laserSoundTask.onSuccess = (task) => {
+    scene.assets.laserSound = new BABYLON.Sound("laserSoundTask", task.data, scene, null, {
+      loop: false,
+      autoplay: false,
+    })
+    scene.assets.laserSound.setVolume(0.3)
+  } 
+  laserSoundTask.onError = (task, message, exception) =>
+    console.log(message, exception) 
+}
+
+function loadExplosionSound() {
+  var explosionSoundTask = assetsManager.addBinaryFileTask(
+    "explosionSoundTask",
+    Constants.EXPLOSION_SOUND
+  ) 
+  explosionSoundTask.onSuccess = (task) => {
+    scene.assets.explosionSound = new BABYLON.Sound("explosionSoundTask", task.data, scene, null, {
+      loop: false,
+      autoplay: false,
+    })
+    scene.assets.explosionSound.setVolume(0.5)
+  } 
+  explosionSoundTask.onError = (task, message, exception) =>
     console.log(message, exception) 
 }
 
@@ -400,7 +539,7 @@ function modifySettings() {
         event.key === "D"
       ) {
         inputStates.right = true 
-      } else if (event.keyCode == 32) {//TODO: event.key === "Space" doesn't work...
+      } else if (event.key === "l"||  event.key === "L") {
         inputStates.laser = true 
       }
     },
@@ -418,7 +557,7 @@ function modifySettings() {
         event.key === "D"
       ) {
         inputStates.right = false 
-      } else if (event.keyCode == 32) {//TODO: event.key === "Space" doesn't work...
+      } else if (event.key === "l"||  event.key === "L") {
         inputStates.laser = false 
       }
     },

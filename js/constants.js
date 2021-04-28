@@ -42,7 +42,6 @@ export const IMAGE_PREVIEWS = [IMAGE_PREVIEW_PLANET1, IMAGE_PREVIEW_PLANET2,
 export const BACKGROUND_MUSIC = "sounds/space.mp3"
 export const LASER_SOUND = "sounds/laser.mp3"
 export const EXPLOSION_SOUND = "sounds/explosion.mp3"
-export const RELOAD_SOUND = "sounds/reload.mp3"
 
 //==========================================================
 //=========================GAME SETTINGS====================
@@ -55,24 +54,26 @@ export const CAMERA_ACCELERATION = 0.1 // how fast to move
 export const MAX_CAMERA_SPEED = 5 // speed limit
 
 //PLENETS GENERATION AD ENVIRONMENT
-export const OBJECTS_COUNT = 100 //How many planets (of each type) should be generated
-export const MAX_X = 1000 //The upper max X of scene
-export const MIN_X = -1000 //The lower min X of scene
-export const MAX_Z = 1000 //The upper max Z of scene
-export const MIN_Z = -1000 //The lower min Z of scene
-export const SKYBOX_SIZE = 10000
+export const OBJECTS_COUNT = 200 //How many planets (of each type) should be generated
+export const MAX_X = 500 //The upper max X of scene
+export const MIN_X = -500 //The lower min X of scene
+export const MAX_Z = 500 //The upper max Z of scene
+export const MIN_Z = -500 //The lower min Z of scene
+export const SKYBOX_SIZE = 5000
+
+export const EXPLOSION_TIMEOUT = 3000 //miliseconds
 
 //AIRCRAFT
 export const AIRCRAFT_MESH_NAME = "aircraft"
 export const AIRCRAFT_SCALING = 0.01
-export const AIRCRAFT_ROTATION_VALUE = 0.1
-export const AIRCRAFT_SPEED = 0.2
+export const AIRCRAFT_ROTATION_VALUE = 0.05
+export const AIRCRAFT_SPEED = 0.15
 
 //RAY
 export const RAY_STANDING_TIME = 200
 export const RAY_TIMEOUT = 1000
 export const RAY_FIRE_LASERS_AFTER = 0.3
-export const RAY_LENGTH = 100
+export const RAY_LENGTH = 20
 
 //PLANETS
 export const PLANETS_SCALING = 3
