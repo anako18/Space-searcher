@@ -43,13 +43,53 @@ figure {
   max-width: 100%;
   max-height: 100%;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 500px) {
   figcaption {
-     font-size: 16px;
+     font-size: 10px;
   }
 }
 @media screen and (min-width: 1000px) {
   figcaption {
-     font-size: 36px;
+     font-size: 15px;
+  }
+}
+@media screen and (min-width: 1500px) {
+  figcaption {
+     font-size: 20px;
+  }
+}
+@media screen and (min-width: 2000px) {
+  figcaption {
+     font-size: 25px;
+  }
+}
+@media screen and (min-width: 3000px) {
+  figcaption {
+     font-size: 30px;
+  }
+}
+@media screen and (min-width: 3500px) {
+  figcaption {
+     font-size: 35px;
+  }
+}
+@media screen and (min-width: 4000px) {
+  figcaption {
+     font-size: 40px;
+  }
+}
+@media screen and (min-width: 4500px) {
+  figcaption {
+     font-size: 50px;
+  }
+}
+@media screen and (min-width: 5000px) {
+  figcaption {
+     font-size: 60px;
+  }
+}
+@media screen and (min-width: 6000px) {
+  figcaption {
+     font-size: 70px;
   }
 }

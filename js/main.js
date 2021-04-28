@@ -562,7 +562,12 @@ function modifySettings() {
   scene.inputStates.laser = false 
 
   scene.mainListener = (event) => {
-    if (event.key === "ArrowLeft" || event.key === "q" || event.key === "Q") {
+    if (event.key === "ArrowLeft" || 
+    event.key === "q" || 
+    event.key === "Q" || 
+    event.key === "q" || 
+    event.key === "Q"
+    ) {
       scene.inputStates.left = true 
     } else if (
       event.key === "ArrowRight" ||
@@ -570,7 +575,7 @@ function modifySettings() {
       event.key === "D"
     ) {
       scene.inputStates.right = true 
-    } else if (event.key === "l" || event.key === "L" || event.key === "space") {
+    } else if (event.key === "l" || event.key === "L" || event.keyCode === 32) {
       scene.inputStates.laser = true 
     }
   }
@@ -584,7 +589,12 @@ function modifySettings() {
   window.addEventListener(
     "keyup",
     (event) => {
-      if (event.key === "ArrowLeft" || event.key === "q" || event.key === "Q") {
+      if (event.key === "ArrowLeft" || 
+      event.key === "q" || 
+      event.key === "Q" || 
+      event.key === "q" || 
+      event.key === "Q"
+      ) {
         scene.inputStates.left = false 
       } else if (
         event.key === "ArrowRight" ||
@@ -592,7 +602,7 @@ function modifySettings() {
         event.key === "D"
       ) {
         scene.inputStates.right = false 
-      } else if (event.key === "l" || event.key === "L" || event.key === "space") {
+      } else if (event.key === "l" || event.key === "L" || event.keyCode === 32) {//"space" doesn't work..?
         scene.inputStates.laser = false 
       }
     },

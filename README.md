@@ -2,7 +2,7 @@
 
 Student: **Anastasiia KOZLOVA**
 
-The game is deployed to heroku, but needs a fix of html...(the planet preview is way too big, but it's good in local) https://space-searcher.herokuapp.com/
+The game is deployed to heroku: https://space-searcher.herokuapp.com/
 
 The idea of the game is that the airship controlled by the user is flying in the space and grabbing the planets of the specific types. At each moment just one type of planet needs to be found.
 The required planet type is displayed in the upper left corner of the screen, as well as the score counter.
@@ -17,9 +17,9 @@ Many game settings, such as planet's count, textures, speeds, scales can be chan
 
 ## Controls
 After pressing the key the airship will start to fly non-stop automatically.
-- `Left arrow or "q"` - turns the airshop to the left
-- `Right arrow or "d"` - turns the airshop to the right
-- `l` - use the laser
+- `Left arrow or A or Q` - turns the airshop to the left (azerty and qwerty)
+- `Right arrow or D` - turns the airshop to the right
+- `L or SPACE` - use the laser
 # Project structure
 - **/css** - css files
 - **/images** - images, mainly the planet previews
