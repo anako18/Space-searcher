@@ -16,8 +16,9 @@ body {
 
 #overlay {
   position: absolute;
-  top: 100px;
-  left: 100px;
+  vertical-align:top;
+  top: 0.05%;
+  left: 0.05%;
 }
 figcaption {
   text-align: center;
