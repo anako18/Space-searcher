@@ -565,8 +565,8 @@ function modifySettings() {
     if (event.key === "ArrowLeft" || 
     event.key === "q" || 
     event.key === "Q" || 
-    event.key === "q" || 
-    event.key === "Q"
+    event.key === "a" || 
+    event.key === "A"
     ) {
       scene.inputStates.left = true 
     } else if (
@@ -592,8 +592,8 @@ function modifySettings() {
       if (event.key === "ArrowLeft" || 
       event.key === "q" || 
       event.key === "Q" || 
-      event.key === "q" || 
-      event.key === "Q"
+      event.key === "a" || 
+      event.key === "A"
       ) {
         scene.inputStates.left = false 
       } else if (
