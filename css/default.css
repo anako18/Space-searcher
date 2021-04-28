@@ -12,6 +12,8 @@ body {
 
 #canvas-wrap {
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 #overlay {
@@ -19,11 +21,35 @@ body {
   vertical-align:top;
   top: 0.05%;
   left: 0.05%;
+  min-width: none;
+  max-width: noe;
+  width: 15%;
+  height: 15%;
 }
 figcaption {
   text-align: center;
   font-style: normal; 
-  font-size: 60px;
+  font-size: 20px;
+  text-size-adjust: inherit;
   font-weight:700;
   color: aliceblue;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+figure {
+  max-width: 100%;
+  max-height: 100%;
+}
+@media screen and (max-width: 600px) {
+  figcaption {
+     font-size: 16px;
+  }
+}
+@media screen and (min-width: 1000px) {
+  figcaption {
+     font-size: 36px;
+  }
 }

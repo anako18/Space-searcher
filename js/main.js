@@ -13,7 +13,7 @@ function startGame() {
   canvas = document.querySelector("#myCanvas") 
   engine = new BABYLON.Engine(canvas, true) 
 
-  scene = createScene() 
+  scene = createScene()
   modifySettings() 
   loadModels()
   loadSounds()
@@ -244,7 +244,7 @@ function gameOver() {
 
   scene.assets.explosionSound.play()
   scene.assets.explosionSphere.particleSystem.start()
-  updateLabel()
+  window.removeEventListener('keydown', scene.mainListener)
 }
 
 function loadExplotionParticleSystem() {
@@ -530,7 +530,6 @@ function createScene() {
   scene.planets = []
   scene.inputStates = {}
   scene.assetsManager = new BABYLON.AssetsManager(scene)
-
   return scene 
 }
 
@@ -562,21 +561,23 @@ function modifySettings() {
   scene.inputStates.right = false 
   scene.inputStates.laser = false 
 
+  scene.mainListener = (event) => {
+    if (event.key === "ArrowLeft" || event.key === "q" || event.key === "Q") {
+      scene.inputStates.left = true 
+    } else if (
+      event.key === "ArrowRight" ||
+      event.key === "d" ||
+      event.key === "D"
+    ) {
+      scene.inputStates.right = true 
+    } else if (event.key === "l" || event.key === "L" || event.key === "space") {
+      scene.inputStates.laser = true 
+    }
+  }
+  
   window.addEventListener(
     "keydown",
-    (event) => {
-      if (event.key === "ArrowLeft" || event.key === "q" || event.key === "Q") {
-        scene.inputStates.left = true 
-      } else if (
-        event.key === "ArrowRight" ||
-        event.key === "d" ||
-        event.key === "D"
-      ) {
-        scene.inputStates.right = true 
-      } else if (event.key === "l" || event.key === "L" || event.key === "space") {
-        scene.inputStates.laser = true 
-      }
-    },
+    scene.mainListener,
     false
   ) 
 
